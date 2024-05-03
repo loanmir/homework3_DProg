@@ -35,8 +35,10 @@ temp1 <- beaver1 # !!!!
 beaverT <- sprintf("%04d", as.numeric(beaver1$time))
 beaverTime <- format(strptime(beaverT,"%H%M"), "%H:%M")
 beaver1$hmin <- beaverTime
-temp1 %>% as.tibble()
+temp1 
+temp1$newdate <- as.Date(paste(temp1$dateTime,temp1$hmin, sep = " "), format="%b %d %H:%M")
 as_tibble(temp1)
+
 
 
 
@@ -44,15 +46,15 @@ as_tibble(temp1)
 # EXERCISE 2!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 c(EUR=1,datasets::euro)
 
-convert_currency <- function(amounts, to_currency = "EUR") {
+convert.all <- function(amounts, to_currency) {
   # Define conversion rates
-  conversion_rates <- c(EUR = 1, datasets::euro)
+  currencies <- c(EUR = 1, datasets::euro)
   
   # Convert to upper case
   to_currency <- toupper(to_currency)
   
   # Check if to_currency exists in conversion rates
-  if (!(to_currency %in% names(conversion_rates))) {
+  if (!(to_currency %in% names(currencies))) {
     return(0)  # Return 0 if to_currency doesn't exist
   }
   
@@ -62,16 +64,36 @@ convert_currency <- function(amounts, to_currency = "EUR") {
   # Loop through each currency amount
   for (currency in names(amounts)) {
     # Check if currency exists in conversion rates
-    if (currency %in% names(conversion_rates)) {
+    if (currency %in% names(currencies)) {
       # Convert currency amount to to_currency using conversion rate
-      total_amount <- total_amount + amounts[currency] * conversion_rates[[currency]] / conversion_rates[[to_currency]]
+      if(is.null(to_currency)){
+        
+      }
+      total_amount <- total_amount + amounts[currency] * currencies[[currency]] / currencies[[to_currency]]
     }
   }
   
   return(total_amount)
 }
 
-convert_currency(c(EUR=3,DEM=2, SIT=10000))
 
+# Pravilna druga vajaaa
+convert.all <- function(amount, currency = "EUR"){
+  # Define conversion rates
+  currencies <- c(EUR = 1, datasets::euro)
+  if (!(currency %in% names(currencies))){
+    return(0)
+  }
+  converted_values <- amount / currencies[names(amount)]
+  sum_amount <- sum(converted_values, na.rm=T)
+  return (sum_amount * currencies[currency])
+}
 
+convert.all(c(EUR=6.5))
+convert.all(c(EUR=3,ATS=2))
+convert.all(c(EUR=3,EUR=2))
+convert.all(c(EUR=3,DEM=2,SIT=10000))
+convert.all(c(EUR=3,DEM=2,SIT=10000),"EUR")
+convert.all(c(EUR=3,SIT=10000,DEM=2),"ESP")
+convert.all(c(EUR=3,DEM=2,LIRA=100),"SIT")
 
