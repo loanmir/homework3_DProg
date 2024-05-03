@@ -1,0 +1,78 @@
+---
+title: "Data Programming"
+subtitle: "Homework 2"
+author: "Lucas Lorenzo Jakin"
+date: "`r format(Sys.time(), '%e %B %Y')`"
+format: 
+  html:
+    embed-resources: true
+execute: 
+  warning: false
+  messages: false
+  echo: true
+  error: true
+---
+
+## Solutions
+
+Submit a **.html** file created using Quarto via e-classroom. A sample is attached. Display all code (packages,input) and output.
+
+
+
+Import the csv file from **https://www.kaggle.com/datasets/vishnuvarthanrao/windows-store** (login is required). Parse the Date column into a date.
+
+```{r}
+
+```
+
+Careful with dealing with missing/NA data at the end. Some functions like sum, min, max have a 
+ option.
+Answer these questions independentlty:
+
+
+1.  Display the dataframe as a tibble.
+2.  How long has the data been collected?
+3.  Among the highest rated apps return the 10 apps (rows) with the highest amount of reviews. Display only the first 3 columns.
+4.  Show the number of apps created per month.
+5.  Sort the rows of the dataframe from the least wordy to most wordy app name. Display the first 15.
+
+```{r}
+# solve 1-5 here
+library(tidyverse)
+#importing csv file
+df <- read.csv("msft.csv")
+as.tibble(df)
+#1 Display the dataframe as a tibble
+# Parse Date column into a date
+df$Date <- dmy(df$Date)
+as.tibble(df)
+
+#2 How long has the data been collected?
+diff_date <- max(df$Date, na.rm=T) - min(df$Date, na.rm=T)
+print(diff_date)
+
+#3 10 rows with highest amount of reviews. Display only first 3 columns
+highest_rated <- df[df$Rating==5,]
+highest_rated <- highest_rated[order(highest_rated$No.of.people.Rated, decreasing = T),]
+highest_rated <- highest_rated[1:10, 1:3]
+highest_rated
+
+#4 Show number of apps created per month
+appsPerMonth <- table(format(df$Date, "%m"), useNA="always")
+appsPerMonth
+#df %>% mutate(month = format(df$Date, "%m")) %>% count(month) %>% unname()
+
+#5 Sort rows of dataframe from least wordy to most wordy app name.
+# Displaye first 15
+library(dplyr)
+df %>% arrange(nchar(Name)) %>% head(15)
+```
+
+```{r}
+#| echo: false
+#installs tidyverse and quarto if not done already, delete this chunk after running it once.
+normalpackages<-c("tidyverse","quarto")
+   new.packages <- normalpackages[!(normalpackages %in% installed.packages()[,"Package"])]
+  if(length(new.packages)>0) {install.packages(new.packages,dependencies =T,quiet = T)}
+```
+
