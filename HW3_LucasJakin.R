@@ -17,7 +17,6 @@ ggplot(df3) + aes(x=X, y=Y) + geom_path(color = "violet") + facet_wrap(vars(Type
   + labs(title = "Temperature of beavers over time", y = "Temperature (°C)")
 
 # GGPLOT OF BEAVER 1!!!!!!!!!!!!!!!!!!!!!!
-
 temp1 <- beaver1 # !!!!
 # day to date format
 beaverMonth <- as.Date(beaver1$day, format ="%B %d")
@@ -27,7 +26,6 @@ beaver1$dateTime <- beaverMonth2
 beaverT <- sprintf("%04d", as.numeric(beaver1$time))
 beaverTime <- format(strptime(beaverT,"%H%M"), "%H:%M")
 beaver1$hmin <- beaverTime
-as_tibble(temp1)
 temp1$dayAndTime <- paste(temp1$dateTime,temp1$hmin)
 dftemp1 <- data.frame(datetime1 = as.POSIXct(temp1$dayAndTime, format = "%b %d %H:%M"), sprem1 = temp1$temp)
 
@@ -36,7 +34,7 @@ ggplot(dftemp1,aes(x=datetime1, y = sprem1)) + geom_path(color="red") +
   labs(y="Temperature (°C)", title = "Temperature of beavers over time") + theme_minimal()
 
 
-# FORMAT BEAVER 2
+#GGPLOT OF BEAVER2!!!!!!!!!!!!!!!
 temp2 <- beaver2
 beaverMonthTwo <- as.Date(temp2$day, format ="%B %d")
 beaverMonth2Two <- format(beaverMonthTwo, "%b %d")
@@ -45,12 +43,7 @@ temp2$dateTime <- beaverMonth2Two
 beaverT2 <- sprintf("%04d", as.numeric(temp2$time))
 beaverTime2 <- format(strptime(beaverT2,"%H%M"), "%H:%M")
 temp2$hmin <- beaverTime2
-
-
-#GGPLOT OF BEAVER2!!!!!!!!!!!!!!!
-
 temp2$dayAndTime <- paste(temp2$dateTime,temp2$hmin)
-as_tibble(temp2)
 dftemp2 <- data.frame(datetime2 = as.POSIXct(temp2$dayAndTime, format = "%b %d %H:%M"), sprem2 = temp2$temp)
 
 ggplot(dftemp2,aes(x=datetime2, y = sprem2)) + geom_path(color="lightblue") +
@@ -106,11 +99,12 @@ convert.all <- function(amounts, to_currency) {
 convert.all <- function(amount, currency = "EUR"){
   # Define conversion rates
   currencies <- c(EUR = 1, datasets::euro)
+  # if currency doesn't exist return 0
   if (!(currency %in% names(currencies))){
     return(0)
   }
   converted_values <- amount / currencies[names(amount)]
-  sum_amount <- sum(converted_values, na.rm=T)
+  sum_amount <- sum(converted_values, na.rm=T) # na.rm for taking care of NA values (if currency don't exist then +0)
   return (sum_amount * currencies[currency])
 }
 
