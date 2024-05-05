@@ -26,40 +26,35 @@ Draw a line chart with ggplot of temperature over time side by side for the 2 bu
 # Solve 1 here!
 library(tidyverse)
 library(ggplot2)
-# GGPLOT OF BEAVER 1!!!!!!!!!!!!!!!!!!!!!!
-temp1 <- beaver1 # !!!!
+
+#BEAVER1
 # day to date format
-beaverMonth <- as.Date(temp1$day, format ="%B %d")
-beaverMonth2 <- format(beaverMonth, "%b %d")
-temp1$dateTime <- beaverMonth2 
-# time to POSIX format
-beaverT <- sprintf("%04d", as.numeric(temp1$time))
-beaverTime <- format(strptime(beaverT,"%H%M"), "%H:%M")
-temp1$hmin <- beaverTime
-temp1$dayAndTime <- paste(temp1$dateTime,temp1$hmin)
-dftemp1 <- data.frame(datetime1 = as.POSIXct(temp1$dayAndTime, format = "%b %d %H:%M"), sprem1 = temp1$temp)
+beaverMonth <- as.Date(beaver1$day, origin = "1989-12-31")
+#time to format
+hour <- beaver1$time %/% 100 # divide by 100 to get hour from time
+minutes <- beaver1$time %% 100 # in order to get the minutes take the rest from before, so remainder!
+combinedTime <- sprintf("%02d:%02d", hour, minutes)
+beaver1$dayAndTime <- ymd_hm(paste(beaverMonth,combinedTime))
 
-ggplot(dftemp1,aes(x=datetime1, y = sprem1)) + geom_path(color="red") +
-  scale_x_datetime(date_breaks = "6 hour",date_labels = "%b %d %H:%M") +
-  labs(y="Temperature (°C)", title = "Temperature of beavers over time") + theme_minimal()
+#BEAVER2
+# day to date format
+beaverMonth2 <- as.Date(beaver2$day, origin = "1989-12-31")
+#time to format
+hour <- beaver2$time %/% 100 # divide by 100 to get hour from time
+minutes <- beaver2$time %% 100 # in order to get the minutes take the rest from before, so remainder!
+combinedTime <- sprintf("%02d:%02d", hour, minutes)
+beaver2$dayAndTime <- ymd_hm(paste(beaverMonth2,combinedTime))
 
+beaver1$text <- "Beaver1"
+beaver2$text <- "Beaver2"
 
+groupedData <- bind_rows(beaver1,beaver2) #combine both data frames to plot them together
 
-#GGPLOT OF BEAVER2!!!!!!!!!!!!!!!
-temp2 <- beaver2
-beaverMonthTwo <- as.Date(temp2$day, format ="%B %d")
-beaverMonth2Two <- format(beaverMonthTwo, "%b %d")
-temp2$dateTime <- beaverMonth2Two 
-# time to POSIX format
-beaverT2 <- sprintf("%04d", as.numeric(temp2$time))
-beaverTime2 <- format(strptime(beaverT2,"%H%M"), "%H:%M")
-temp2$hmin <- beaverTime2
-temp2$dayAndTime <- paste(temp2$dateTime,temp2$hmin)
-dftemp2 <- data.frame(datetime2 = as.POSIXct(temp2$dayAndTime, format = "%b %d %H:%M"), sprem2 = temp2$temp)
-
-ggplot(dftemp2,aes(x=datetime2, y = sprem2)) + geom_path(color="lightblue") +
-  scale_x_datetime(date_breaks = "6 hour",date_labels = "%b %d %H:%M") +
-  labs(y="Temperature (°C)", title = "Temperature of beavers over time") + theme_minimal()
+#plotting the data frames
+ggplot(groupedData, aes(x=dayAndTime, y = temp, color = text)) +
+  geom_line() +
+  facet_wrap(~text, scales = "free_x") + labs(title = "Temperature of beavers over time", y = "Temperature (°C)") +
+  theme(legend.position = "right")
 
 ```
 

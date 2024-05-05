@@ -2,6 +2,38 @@ library(tidyverse)
 library(ggplot2)
 # 1
 
+#Plotting ta pravi!!!!!
+#BEAVER1
+# day to date format
+beaverMonth <- as.Date(beaver1$day, origin = "1989-12-31")
+#time to format
+hour <- beaver1$time %/% 100 # divide by 100 to get hour from time
+minutes <- beaver1$time %% 100 # in order to get the minutes take the rest from before, so remainder!
+combinedTime <- sprintf("%02d:%02d", hour, minutes)
+beaver1$dayAndTime <- ymd_hm(paste(beaverMonth,combinedTime))
+
+#BEAVER2
+# day to date format
+beaverMonth2 <- as.Date(beaver2$day, origin = "1989-12-31")
+#time to format
+hour <- beaver2$time %/% 100 # divide by 100 to get hour from time
+minutes <- beaver2$time %% 100 # in order to get the minutes take the rest from before, so remainder!
+combinedTime <- sprintf("%02d:%02d", hour, minutes)
+beaver2$dayAndTime <- ymd_hm(paste(beaverMonth2,combinedTime))
+
+beaver1$text <- "Beaver1"
+beaver2$text <- "Beaver2"
+
+groupedData <- bind_rows(beaver1,beaver2) #combine both data frames to plot them together
+
+#plotting the data frames
+ggplot(groupedData, aes(x=dayAndTime, y = temp, color = text)) +
+  geom_line() +
+  facet_wrap(~text, scales = "free_x") + labs(title = "Temperature of beavers over time", y = "Temperature (°C)") +
+  theme(legend.position = "right")
+
+
+
 
 {data.frame(X=c(beaver1$time, beaver2$time),
             Y=c(beaver1$temp, beaver2$temp),
