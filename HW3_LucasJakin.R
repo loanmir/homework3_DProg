@@ -1,47 +1,72 @@
 library(tidyverse)
 library(ggplot2)
 # 1
-x1 <- beaver1$day
-y1 <- beaver1$temp
 
-x2 <- beaver2$day
-y2 <- beaver2$temp
-
-data.frame(Temperature=x1,y1) %>% ggplot()
-
-# plot beaver1
-plot_beaver1 <- ggplot(data = beaver1, aes(x= time, y = temp)) + 
-  geom_line() + labs(title = "Temperature of beavers over time", y = "Temperature (°C)") +
-  theme_minimal()
-
-#plot beaver2
-plot_beaver2 <- ggplot(data = beaver2, aes(x= time, y = temp)) + 
-  geom_line() + labs(title = "Temperature of beavers over time", y = "Temperature (°C)") +
-  theme_minimal()
-
-#plot_side_by_side <- plot_beaver1 + plot_beaver2 + plot_layout(ncol=2)
 
 {data.frame(X=c(beaver1$time, beaver2$time),
             Y=c(beaver1$temp, beaver2$temp),
             Type=rep(c("beaver1", "beaver2")))} -> df2
-ggplot(df2) + aes(x=X, y=Y) + geom_path() + facet_wrap(vars(Type)) + labs(title = "Temperature of beavers over time", y = "Temperature (°C)")
+ggplot(df2) + aes(x=X, y=Y) + geom_path(color = "red") + facet_wrap(vars(Type)) + labs(title = "Temperature of beavers over time", y = "Temperature (°C)")
 
+
+{data.frame(X=c(dftemp1$datetime1, dftemp2$datetime2),
+            Y=c(dftemp1$sprem1, dftemp2$sprem2),
+            Type=rep(c("beaver1", "beaver2")))} -> df3
+ggplot(df3) + aes(x=X, y=Y) + geom_path(color = "violet") + facet_wrap(vars(Type)) +
+  scale_x_datetime(date_breaks = "6 hour",date_labels = "%b %d %H:%M")
+  + labs(title = "Temperature of beavers over time", y = "Temperature (°C)")
+
+# GGPLOT OF BEAVER 1!!!!!!!!!!!!!!!!!!!!!!
+
+temp1 <- beaver1 # !!!!
 # day to date format
 beaverMonth <- as.Date(beaver1$day, format ="%B %d")
 beaverMonth2 <- format(beaverMonth, "%b %d")
 beaver1$dateTime <- beaverMonth2 
-temp1 <- beaver1 # !!!!
 # time to POSIX format
 beaverT <- sprintf("%04d", as.numeric(beaver1$time))
 beaverTime <- format(strptime(beaverT,"%H%M"), "%H:%M")
 beaver1$hmin <- beaverTime
-temp1 
-temp1$newdate <- as.Date(paste(temp1$dateTime,temp1$hmin, sep = " "), format="%b %d %H:%M")
 as_tibble(temp1)
+temp1$dayAndTime <- paste(temp1$dateTime,temp1$hmin)
+dftemp1 <- data.frame(datetime1 = as.POSIXct(temp1$dayAndTime, format = "%b %d %H:%M"), sprem1 = temp1$temp)
+
+ggplot(dftemp1,aes(x=datetime1, y = sprem1)) + geom_path(color="red") +
+  scale_x_datetime(date_breaks = "6 hour",date_labels = "%b %d %H:%M") +
+  labs(y="Temperature (°C)", title = "Temperature of beavers over time") + theme_minimal()
+
+
+# FORMAT BEAVER 2
+temp2 <- beaver2
+beaverMonthTwo <- as.Date(temp2$day, format ="%B %d")
+beaverMonth2Two <- format(beaverMonthTwo, "%b %d")
+temp2$dateTime <- beaverMonth2Two 
+# time to POSIX format
+beaverT2 <- sprintf("%04d", as.numeric(temp2$time))
+beaverTime2 <- format(strptime(beaverT2,"%H%M"), "%H:%M")
+temp2$hmin <- beaverTime2
+
+
+#GGPLOT OF BEAVER2!!!!!!!!!!!!!!!
+
+temp2$dayAndTime <- paste(temp2$dateTime,temp2$hmin)
+as_tibble(temp2)
+dftemp2 <- data.frame(datetime2 = as.POSIXct(temp2$dayAndTime, format = "%b %d %H:%M"), sprem2 = temp2$temp)
+
+ggplot(dftemp2,aes(x=datetime2, y = sprem2)) + geom_path(color="lightblue") +
+  scale_x_datetime(date_breaks = "6 hour",date_labels = "%b %d %H:%M") +
+  labs(y="Temperature (°C)", title = "Temperature of beavers over time") + theme_minimal()
 
 
 
 
+
+
+
+
+
+
+#temp1$newdate <- as.Date(paste(temp1$dateTime,temp1$hmin, sep = " "), format="%b %d %H:%M")
 
 # EXERCISE 2!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 c(EUR=1,datasets::euro)
