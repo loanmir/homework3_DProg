@@ -45,8 +45,8 @@ minutes <- beaver2$time %% 100 # in order to get the minutes take the rest from 
 combinedTime <- sprintf("%02d:%02d", hour, minutes)
 beaver2$dayAndTime <- ymd_hm(paste(beaverMonth2,combinedTime))
 
-beaver1$text <- "Beaver1"
-beaver2$text <- "Beaver2"
+beaver1$text <- "beaver1"
+beaver2$text <- "beaver2"
 
 groupedData <- bind_rows(beaver1,beaver2) #combine both data frames to plot them together
 
